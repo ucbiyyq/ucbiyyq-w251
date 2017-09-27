@@ -1,0 +1,51 @@
+Hardware: Raspberry Pi3
+
+How does it differ performance-wise from a regular desktop?
+* In some instances, specs are better than some of the older desktops, e.g. quad core CPUs
+* However, it only has 1 GB of ram
+* Although at 25 GPB, I can probably buy many more of these devices
+
+
+
+Hardware: Nvidia Jetson family
+
+How much faster is it compared to a Raspberry Pi3?
+* Both NVIDIA models have GPUs, which Pi3 does not. 
+* And has much more ram, 4 to 8 gb
+
+
+MQTT
+
+In your homework submission, please write a one liner about the QoS 0,1, and 2 that MQTT enables.
+* MQTT allows the sender & receiver devices to communication with each other through a broker, and specify that a message be sent at most once (0), at least once (1), or exactly once (2).
+
+
+
+Blue Horizon
+
+In a few sentences, how are block chains relevant for the Internet of Things?
+* Block chains allow for devices in the internet of things to communicate transaction history with one another, without necessarily trusting a central party, or each other
+* This allows for certain types of applications that would normally require some sort of central IT infrastructure, such as 
+** smart contracts that tie delivery of goods to conditions of shipment
+** Decentralized file system
+** Decentralized democracy
+
+
+
+Subscribing to messages on the development Blue Horizon MQTT Cloud Broker
+
+please explain what the + and # in the line above stand for, as well as provide a few lines of output that you see on screen. Can you recognize some of the messages? What is their meaning?
+* This command means we are subscribing to this /applications/in/+/public/# topic, on a specific hostname
+* The +and # are topic wildcards; + is a single level, # is multiple levels
+* In this case, we are subscribing to all the topics in applications-in-XYZ-public hierarchy, and then underneath that, any topic that  matches public-ABC
+* Perhaps these messages are the blocks of a private blockchain?
+
+
+root@mosquito:~# mosquitto_sub -t /applications/in/+/public/# -h 198.23.89.34
+{"t":1505808084,"d":[{"PRN":3,"el":5,"az":174,"ss":0,"used":false},{"PRN":5,"el":7,"az":323,"ss":31,"used":true},{"PRN":7,"el":62,"az":310,"ss":32,"used":true},{"PRN":8,"el":28,"az":114,"ss":25,"used":true},{"PRN":9,"el":82,"az":96,"ss":26,"used":true},{"PRN":16,"el":22,"az":42,"ss":34,"used":true},{"PRN":23,"el":52,"az":124,"ss":20,"used":true},{"PRN":27,"el":25,"az":75,"ss":31,"used":true},{"PRN":28,"el":18,"az":210,"ss":0,"used":false},{"PRN":30,"el":35,"az":276,"ss":23,"used":true}]}
+{"t":1505808085,"d":[{"PRN":3,"el":5,"az":174,"ss":0,"used":false},{"PRN":5,"el":7,"az":323,"ss":32,"used":true},{"PRN":7,"el":62,"az":310,"ss":32,"used":true},{"PRN":8,"el":28,"az":114,"ss":26,"used":true},{"PRN":9,"el":82,"az":96,"ss":27,"used":true},{"PRN":16,"el":22,"az":42,"ss":35,"used":true},{"PRN":23,"el":52,"az":124,"ss":20,"used":true},{"PRN":27,"el":25,"az":75,"ss":32,"used":true},{"PRN":28,"el":18,"az":210,"ss":0,"used":false},{"PRN":30,"el":35,"az":276,"ss":24,"used":true}]}
+{"t":1505808086,"d":[{"PRN":5,"el":7,"az":323,"ss":31,"used":true},{"PRN":7,"el":62,"az":310,"ss":33,"used":true},{"PRN":8,"el":28,"az":114,"ss":26,"used":true},{"PRN":9,"el":82,"az":96,"ss":27,"used":true},{"PRN":16,"el":22,"az":42,"ss":35,"used":true},{"PRN":23,"el":52,"az":124,"ss":20,"used":true},{"PRN":27,"el":25,"az":75,"ss":31,"used":true},{"PRN":30,"el":35,"az":276,"ss":23,"used":true},{"PRN":193,"el":8,"az":310,"ss":25,"used":true}]}
+{"t":1505808086,"d":[{"PRN":3,"el":5,"az":174,"ss":0,"used":false},{"PRN":5,"el":7,"az":323,"ss":31,"used":true},{"PRN":7,"el":62,"az":310,"ss":33,"used":true},{"PRN":8,"el":28,"az":114,"ss":26,"used":true},{"PRN":9,"el":82,"az":96,"ss":27,"used":true},{"PRN":16,"el":22,"az":42,"ss":35,"used":true},{"PRN":23,"el":52,"az":124,"ss":20,"used":true},{"PRN":27,"el":25,"az":75,"ss":31,"used":true},{"PRN":28,"el":18,"az":210,"ss":0,"used":false},{"PRN":30,"el":35,"az":276,"ss":23,"used":true}]}
+{"t":1505808087,"d":[{"PRN":3,"el":5,"az":174,"ss":0,"used":false},{"PRN":5,"el":7,"az":323,"ss":30,"used":true},{"PRN":7,"el":62,"az":310,"ss":32,"used":true},{"PRN":8,"el":28,"az":114,"ss":24,"used":true},{"PRN":9,"el":82,"az":96,"ss":25,"used":true},{"PRN":16,"el":22,"az":42,"ss":34,"used":true},{"PRN":23,"el":52,"az":124,"ss":19,"used":true},{"PRN":27,"el":25,"az":75,"ss":30,"used":true},{"PRN":28,"el":18,"az":210,"ss":0,"used":false},{"PRN":30,"el":35,"az":276,"ss":22,"used":true}]}
+{"t":1505808088,"d":[{"PRN":3,"el":5,"az":174,"ss":0,"used":false},{"PRN":5,"el":7,"az":323,"ss":30,"used":true},{"PRN":7,"el":62,"az":310,"ss":32,"used":true},{"PRN":8,"el":28,"az":114,"ss":25,"used":true},{"PRN":9,"el":82,"az":96,"ss":26,"used":true},{"PRN":16,"el":22,"az":42,"ss":34,"used":true},{"PRN":23,"el":52,"az":124,"ss":20,"used":true},{"PRN":27,"el":25,"az":75,"ss":31,"used":true},{"PRN":28,"el":18,"az":210,"ss":0,"used":false},{"PRN":30,"el":35,"az":276,"ss":23,"used":true}]}
+{"t":1505808089,"d":[{"PRN":3,"el":5,"az":174,"ss":0,"used":false},{"PRN":5,"el":7,"az":323,"ss":30,"used":true},{"PRN":7,"el":62,"az":310,"ss":33,"used":true},{"PRN":8,"el":28,"az":114,"ss":26,"used":true},{"PRN":9,"el":82,"az":96,"ss":26,"used":true},{"PRN":16,"el":22,"az":42,"ss":34,"used":true},{"PRN":23,"el":52,"az":124,"ss":20,"used":true},{"PRN":27,"el":25,"az":75,"ss":31,"used":true},{"PRN":28,"el":18,"az":210,"ss":0,"used":false},{"PRN":30,"el":35,"az":276,"ss":23,"used":true}]}

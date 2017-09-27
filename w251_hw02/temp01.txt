@@ -1,0 +1,53 @@
+
+
+SL1432883
+Bluedwarfgigamons01!
+
+674c1cddcc2458f3400ba9f5f0066db87c056c5cff8bb1fcf85a5a0eec0b2ffd
+
+root
+Rigelstarguardianjupyter01!
+
+
+curl -X POST --user $U:$K -d "$BODY" $SL/SoftLayer_Account/SshKeys
+
+curl -X POST --user SL1432883:674c1cddcc2458f3400ba9f5f0066db87c056c5cff8bb1fcf85a5a0eec0b2ffd -d "$BODY" https://api.softlayer.com/rest/v3/SoftLayer_Account/SshKeys
+
+curl --user SL1432883:674c1cddcc2458f3400ba9f5f0066db87c056c5cff8bb1fcf85a5a0eec0b2ffd https://api.softlayer.com/rest/v3/SoftLayer_Location/Datacenters
+
+curl --user SL1432883:674c1cddcc2458f3400ba9f5f0066db87c056c5cff8bb1fcf85a5a0eec0b2ffd https://api.softlayer.com/rest/v3/SoftLayer_Virtual_Guest/
+
+curl --user SL1432883:674c1cddcc2458f3400ba9f5f0066db87c056c5cff8bb1fcf85a5a0eec0b2ffd https://api.softlayer.com/rest/v3/SoftLayer_Virtual_Guest/39219059
+
+curl --user SL1432883:674c1cddcc2458f3400ba9f5f0066db87c056c5cff8bb1fcf85a5a0eec0b2ffd https://api.softlayer.com/rest/v3/SoftLayer_Virtual_Guest/39219059/SoftwareComponents
+
+curl --user SL1432883:674c1cddcc2458f3400ba9f5f0066db87c056c5cff8bb1fcf85a5a0eec0b2ffd https://api.softlayer.com/rest/v3/SoftLayer_Software_Component/39219059/SoftwareDescription
+
+
+
+curl 'https://SL1432883:674c1cddcc2458f3400ba9f5f0066db87c056c5cff8bb1fcf85a5a0eec0b2ffd@api.softlayer.com/rest/v3/SoftLayer_Account/VirtualGuests.json?objectMask=id;hostname;fullyQualifiedDomainName;primaryIpAddress;operatingSystem.passwords'
+
+curl 'https://SL1432883:674c1cddcc2458f3400ba9f5f0066db87c056c5cff8bb1fcf85a5a0eec0b2ffd@api.softlayer.com/rest/v3/SoftLayer_Account/VirtualGuests.json?objectMask=id;hostname;fullyQualifiedDomainName;primaryIpAddress;operatingSystem.passwords' | jq -r '.[] | select(.hostname == "<my_vms_hostname>") | {fullyQualifiedDomainName,id, root_password: .operatingSystem.passwords[] | select(.username == "root").password, primaryIpAddress}'
+
+
+
+slcli -C C:\Users\yangyq\softlayer\softlayer.conf vs create --datacenter=wdc01 --domain=google.com --hostname=myhost --os=UBUNTU_16_64 --cpu=1 --memory=1024 --billing=hourly
+
+slcli -C C:\Users\yangyq\softlayer\softlayer.conf vs list
+
+slcli -C C:\Users\yangyq\softlayer\softlayer.conf vs credentials 39227403
+slcli -C C:\Users\yangyq\softlayer\softlayer.conf vs credentials 39219059
+
+slcli -C C:\Users\yangyq\softlayer\softlayer.conf vs cancel 39227403
+
+
+slcli -C C:\Users\yangyq\softlayer\softlayer.conf sshkey add -f C:/Users/yangyq/.ssh/id_rsa.pub --note "added during HW 2" w251key
+
+
+slcli -C C:\Users\yangyq\softlayer\softlayer.conf vs create -d wdc01 --os CENTOS_LATEST --cpu 1 --memory 1024 --hostname saltmaster --domain someplace.net --key w251key
+
+# for saltmaster
+slcli -C C:\Users\yangyq\softlayer\softlayer.conf vs credentials 39229085
+
+
+curl -o /tmp/install_salt.sh -L https://bootstrap.saltstack.com && sh /tmp/install_salt.sh -Z -M git 2015.5
