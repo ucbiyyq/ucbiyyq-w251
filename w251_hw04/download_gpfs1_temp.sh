@@ -1,0 +1,1 @@
+ssh gpfs1 'http://storage.googleapis.com/books/ngrams/books/googlebooks-eng-all-2gram-20090715-0.csv.zip -O /root/data/googlebooks-eng-all-2gram-20090715-0.csv.zip'
