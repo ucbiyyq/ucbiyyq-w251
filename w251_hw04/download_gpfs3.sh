@@ -6,5 +6,4 @@ gpfs_path=/gpfs/gpfsfpo/gpfs3/
 
 pushd ${gpfs_path}
 curl ${url_prefix}${file_prefix}[66-99]${zip_suffix} -o ${file_prefix}#1${zip_suffix}
-unzip -o "*.zip"
 popd
