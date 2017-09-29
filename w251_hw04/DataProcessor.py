@@ -1,5 +1,6 @@
 import io
 import os
+import string
 import csv
 import zipfile
 import pickle
@@ -76,7 +77,10 @@ class DataProcessor(object):
                     print("file:", file_suffix, "chunk:", chunk_counter)
                     
                     # splits the bi-gram into their own columns 
-                    temp = frame["bi_gram"].str.split(" ", expand=True)
+                    # also forces the bi-gram into lowercase
+                    temp = frame["bi_gram"].str.lower().str.split(" ", expand=True)
+                    # ... and strips leading & trailing punctuation
+                    temp = temp.apply(lambda x : x.str.strip(string.punctuation))
                     if temp.shape[1] == 2:
                         # if the bi-gram has two words, adds the columns to the frame
                         frame[["bi_gram_0", "bi_gram_1"]] = temp
@@ -84,9 +88,16 @@ class DataProcessor(object):
                         # otherwise if the the bi-gram is just one word,
                         # then creates a second column of nulls
                         frame[["bi_gram_0"]] = temp
-                        frame["bi_gram_1"] = np.nan
+                        frame["bi_gram_1"] = ""
                     else:
                         raise ValueError("temp.shape[1] is not expected 1 or 2: ", temp.shape)
+                    
+                    # filters out any non-english words, defined as 
+                    # bi-gram-0 is entirely alpha
+                    # and bi-gram-1 is entirely alpha
+                    filter1 = frame["bi_gram_0"].str.contains("^[A-Za-z]+$", na=False)
+                    filter2 = frame["bi_gram_1"].str.contains("^[A-Za-z]+$", na=False)
+                    frame = frame[filter1 & filter2]
                     
                     # groups by the bi-gram-0, bi-gram-1, and match_count columns, to save some space
                     frame = frame.groupby(["bi_gram_0", "bi_gram_1"])["match_count"].sum()

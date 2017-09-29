@@ -10,6 +10,7 @@ def main():
     with open(gpfs_counts_fullpath, "rb") as p:
         temp = pickle.load(p)
         print(temp.head(n=nrows))
+        print(temp.shape)
 
 if __name__ == "__main__":
     main()
