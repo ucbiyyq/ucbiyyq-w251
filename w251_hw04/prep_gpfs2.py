@@ -12,10 +12,11 @@ def process_node_summary():
     dp = DataProcessor(gpfs_suffix = "gpfs2")
     
     ## cleans out the local temp pickles
-    dp.delete_local_pickles()
+    #dp.delete_local_pickles()
     
     # for the files in the range of suffixes on this gpfs server, converts the chunks of files into dataframes
-    for i in range(33, 65):
+    #for i in range(33, 65):
+    for i in range(65, 65+1):
         dp.prep_file(file_suffix=i, nrows=None, chunk_size=1000000)
         
     # concatenates all the dataframes generated lcoally from the data files, and pickles them to the given destination
