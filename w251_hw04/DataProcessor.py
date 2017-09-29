@@ -11,7 +11,7 @@ class DataProcessor(object):
     Class: DataProcessor
     
     Helper class that handles the details of processing the data files.
-    Intended to be used by one of the prepare-data scripts on the local gpfs server.
+    Intended to be used by one of the prepare-data scripts on the local gpfs node.
     '''
 
     def __init__(self, gpfs_suffix):
@@ -25,7 +25,7 @@ class DataProcessor(object):
     
     def delete_local_pickles(self):
         '''
-        Deletes the pickled from the local temp folder on this gpfs server
+        Deletes the pickled from the local temp folder on this gpfs node
         '''
         files = os.listdir(self.local_temp_folder_prefix)
         for f in files:
@@ -45,9 +45,9 @@ class DataProcessor(object):
         3  ...
         4  ...
         
-        Because we can't assume bi-gram lists neatly ends on each file, this dataframe is 
-        needs to be combined with the results of all the other prepared files on this server,
-        before total counts can be calculated.
+        Because we can't assume bi-gram lists neatly ends on each file, this dataframe 
+        needs to be combined with the results of all the other prepared files on this gpfs node
+        for the gpfs node summary
         '''
         
         # will store the result here
@@ -100,13 +100,14 @@ class DataProcessor(object):
     
     def concat_local_pickles(self):
         '''
-        Unpickles and concatenates all the pickles in the local temp folder,
-        then pickles the final result to a given folder, for another script to use.
+        Unpickles and concatenates all the pickles in the local temp folder to calculate
+        this gpfs node's summary. This calculates the final counts from all the files in 
+        this gpfs node.
         
-        This calculates the final counts from all the files in this gpfs server.
-        
-        However, because there is no guarantee that the bi-grams neatly fit within
-        each server, there needs to a final concat and calculation step after this
+        It then pickles the final result to the counts folder in the gpfs.
+                
+        However, please note there is no guarantee that the bi-grams neatly fit within
+        each server.
         '''
         
         # will store result in here
@@ -127,7 +128,8 @@ class DataProcessor(object):
         # groups by the bi-gram-0, bi-gram-1, and match_count columns, to save some space
         result = result.groupby(["bi_gram_0", "bi_gram_1"])["match_count"].sum()
         result = pd.DataFrame({"match_count":result}).reset_index()
-        print(result.shape)
         
         # pickles the dataframe to the gpfs, so that another script can use it
-        result.to_pickle(self.gpfs_counts_path + self.gpfs_suffix + "_counts.pkl")
+        node_summary_fullpath = self.gpfs_counts_path + "counts.pkl"
+        print("pickling:", node_summary_fullpath)
+        result.to_pickle(node_summary_fullpath)
