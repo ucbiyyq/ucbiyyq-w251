@@ -1,16 +1,15 @@
+import sys
 import pickle
 import numpy as np
 import pandas as pd
 
-gpfs_suffix = "gpfs1"
-gpfs_prefix = "/gpfs/gpfsfpo/"
-gpfs_counts_fullpath = gpfs_prefix + gpfs_suffix + "/counts/counts.pkl"
-
-def peek_node_summary():
-    frame = None
+def main():
+    gpfs_counts_fullpath = sys.argv[1]
+    nrows = int(sys.argv[2])
+    
     with open(gpfs_counts_fullpath, "rb") as p:
         temp = pickle.load(p)
-        frame = temp
-    print(frame.head())
+        print(temp.head(n=nrows))
 
-peek_node_summary()
+if __name__ == "__main__":
+    main()
