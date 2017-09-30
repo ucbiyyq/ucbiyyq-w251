@@ -7,9 +7,13 @@ import pandas as pd
 
 
 def pick_next_word(word):
+    '''
+    Given a word, picks the next word based on the weighted averages of all following words
+    '''
 
     # obtains the counts from each gfps node
     # TODO make parallel?
+    # TODO add a cache?
     results = ""
     for gpfs_suffix in ["gpfs1", "gpfs2", "gpfs3"]:
         remote_cmd = ["ssh", "root@"+gpfs_suffix, "grep", "-h", "-P", "'^"+word+"\t'", "/gpfs/gpfsfpo/"+gpfs_suffix+"/*-count.csv"]
@@ -65,20 +69,40 @@ def pick_next_word(word):
 
 def main():
     '''
-
+    Mumbler
+    
+    Parameters
+        1. starting word
+        2. max number of words
+        3. optional, random seed
+    
+    Example Usage
+        $ python mumbler.py smithy 10
+        $ python mumbler.py smithy 10 42
     '''
     starting_word = sys.argv[1]
     max_num_words = int(sys.argv[2])
+    random_seed = None
+    if len(sys.argv) >= 4:
+        random_seed = int(sys.argv[3])
     
+    # sets random seed if that was entered
+    if random_seed is not None:
+        np.random.seed(random_seed)
+    
+    # sets the starting word, 
+    # then generates a chain of words as long as the given max number of words
     phrase = starting_word
     current_word= starting_word
     for i in range(max_num_words-1,0,-1):
         next_word = pick_next_word(current_word)
+        # if word chain ends before max number of words reached, breaks
         if next_word is None:
             break
         phrase += (" " + next_word)
         current_word = next_word 
     
+    # outputs the phrase
     print(phrase)
     
         
