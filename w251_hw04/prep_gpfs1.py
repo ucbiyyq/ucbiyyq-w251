@@ -15,12 +15,12 @@ def process_node_summary():
     #dp.delete_local_pickles()
     
     # for the files in the range of suffixes on this gpfs server, converts the chunks of files into dataframes
-    #for i in range(0, 32):
-    for i in range(32, 32+1):
-        dp.prep_file(file_suffix=i, nrows=None, chunk_size=1000000)
+    #for i in range(0, 32+1):
+    for i in range(30, 31+1):
+        dp.prep_file(file_suffix=i, nrows=None)
         
-    # concatenates all the dataframes generated lcoally from the data files, and pickles them to the given destination
-    dp.concat_local_pickles()
+    ## concatenates all the dataframes generated lcoally from the data files, and pickles them to the given destination
+    #dp.concat_local_pickles()
 
     
 process_node_summary()
