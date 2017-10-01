@@ -1,5 +1,5 @@
 import sys
-from DataProcessor import DataProcessor
+from DataProcessor2 import DataProcessor2
 
 def main():
     '''
@@ -27,7 +27,7 @@ def main():
         nrows = int(sys.argv[4])
     
     # creates an instance of the data processing helper class
-    dp = DataProcessor(gpfs_suffix = gpfs_suffix)
+    dp = DataProcessor2(gpfs_suffix = gpfs_suffix)
     
     # for the files in the range of suffixes on this gpfs server, converts the chunks of files into dataframes
     for i in range(file_min, file_max+1):
