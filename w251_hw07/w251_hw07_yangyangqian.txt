@@ -1,0 +1,190 @@
+//commands for uploading object
+
+time swift -A https://dal05.objectstorage.softlayer.net/auth/v1.0/ -U SLOS1432883-2:SL1432883 -K 674c1cddcc2458f3400ba9f5f0066db87c056c5cff8bb1fcf85a5a0eec0b2ffd upload container1 file.txt
+time swift -A https://dal05.objectstorage.softlayer.net/auth/v1.0/ -U SLOS1432883-2:SL1432883 -K 674c1cddcc2458f3400ba9f5f0066db87c056c5cff8bb1fcf85a5a0eec0b2ffd upload container2 file.txt
+time swift -A https://dal05.objectstorage.softlayer.net/auth/v1.0/ -U SLOS1432883-2:SL1432883 -K 674c1cddcc2458f3400ba9f5f0066db87c056c5cff8bb1fcf85a5a0eec0b2ffd upload container3 file.txt
+
+time swift -A https://dal05.objectstorage.softlayer.net/auth/v1.0/ -U SLOS1432883-2:SL1432883 -K 674c1cddcc2458f3400ba9f5f0066db87c056c5cff8bb1fcf85a5a0eec0b2ffd list --lh
+
+time swift -A https://dal05.objectstorage.softlayer.net/auth/v1.0/ -U SLOS1432883-2:SL1432883 -K 674c1cddcc2458f3400ba9f5f0066db87c056c5cff8bb1fcf85a5a0eec0b2ffd list --lh container1
+time swift -A https://dal05.objectstorage.softlayer.net/auth/v1.0/ -U SLOS1432883-2:SL1432883 -K 674c1cddcc2458f3400ba9f5f0066db87c056c5cff8bb1fcf85a5a0eec0b2ffd list --lh container2
+time swift -A https://dal05.objectstorage.softlayer.net/auth/v1.0/ -U SLOS1432883-2:SL1432883 -K 674c1cddcc2458f3400ba9f5f0066db87c056c5cff8bb1fcf85a5a0eec0b2ffd list --lh container3
+
+time swift -A https://dal05.objectstorage.softlayer.net/auth/v1.0/ -U SLOS1432883-2:SL1432883 -K 674c1cddcc2458f3400ba9f5f0066db87c056c5cff8bb1fcf85a5a0eec0b2ffd download container1 file.txt
+time swift -A https://dal05.objectstorage.softlayer.net/auth/v1.0/ -U SLOS1432883-2:SL1432883 -K 674c1cddcc2458f3400ba9f5f0066db87c056c5cff8bb1fcf85a5a0eec0b2ffd download container2 file.txt
+time swift -A https://dal05.objectstorage.softlayer.net/auth/v1.0/ -U SLOS1432883-2:SL1432883 -K 674c1cddcc2458f3400ba9f5f0066db87c056c5cff8bb1fcf85a5a0eec0b2ffd download container3 file.txt
+
+time swift -A https://dal05.objectstorage.softlayer.net/auth/v1.0/ -U SLOS1432883-2:SL1432883 -K 674c1cddcc2458f3400ba9f5f0066db87c056c5cff8bb1fcf85a5a0eec0b2ffd delete --all
+
+
+
+//write
+real    1m29.379s
+user    0m5.176s
+sys     0m1.276s
+root@mini:~#
+
+real    1m29.017s
+user    0m5.236s
+sys     0m1.188s
+root@mini:~#
+
+real    1m29.079s
+user    0m5.056s
+sys     0m1.196s
+root@mini:~#
+
+//average write
+//command line wrote 1 gb in 1m29.158s
+
+
+
+//list
+    1 1.0G 2017-10-29 22:12:15 container1
+    0    0 2017-10-31 16:25:36 container2
+    0    0 2017-10-31 16:28:14 container3
+    1 1.0G
+
+real    0m0.749s
+user    0m0.208s
+sys     0m0.036s
+root@mini:~#
+
+1.0G 2017-10-31 16:22:49               text/plain file.txt
+1.0G
+
+real    0m0.613s
+user    0m0.184s
+sys     0m0.056s
+root@mini:~#
+
+1.0G 2017-10-31 16:25:36               text/plain file.txt
+1.0G
+
+real    0m0.582s
+user    0m0.176s
+sys     0m0.060s
+root@mini:~#
+
+1.0G 2017-10-31 16:28:14               text/plain file.txt
+1.0G
+
+real    0m0.589s
+user    0m0.188s
+sys     0m0.044s
+root@mini:~#
+
+//average list
+0m0.595s
+
+
+
+
+
+//download / read
+
+file.txt [auth 0.192s, headers 0.415s, total 29.567s, 36.554 MB/s]
+
+real    0m29.892s
+user    0m6.776s
+sys     0m4.300s
+root@mini:~#
+
+file.txt [auth 0.183s, headers 0.387s, total 26.431s, 40.906 MB/s]
+
+real    0m27.285s
+user    0m6.732s
+sys     0m3.500s
+root@mini:~#
+
+file.txt [auth 0.165s, headers 0.388s, total 28.014s, 38.556 MB/s]
+
+real    0m29.787s
+user    0m6.880s
+sys     0m3.972s
+root@mini:~#
+
+//average read
+//command line read 1 gb in 0m28.988s
+
+
+
+
+//delete
+container1/file.txt
+container1
+container2/file.txt
+container2
+container3/file.txt
+container3
+
+real    0m1.774s
+user    0m0.256s
+sys     0m0.056s
+root@mini:~#
+
+
+
+//for python code, see hw7.py
+//Python script hangs on upload. Only seems to upload 18 bytes of file.txt
+root@mini:~# python hw7.py
+
+current containers
+
+uploading objects
+^CTraceback (most recent call last):
+  File "hw7.py", line 47, in <module>
+    timeit.timeit(upload_objects)
+  File "/usr/lib/python2.7/timeit.py", line 237, in timeit
+    return Timer(stmt, setup, timer).timeit(number)
+  File "/usr/lib/python2.7/timeit.py", line 202, in timeit
+    timing = self.inner(it, self.timer)
+  File "/usr/lib/python2.7/timeit.py", line 100, in inner
+    _func()
+  File "hw7.py", line 15, in upload_objects
+    sl_storage[container_name][filename].send('Plain-Text Content')
+  File "/usr/local/lib/python2.7/dist-packages/object_storage/storage_object.py", line 364, in send
+    res = conn.finish()
+  File "/usr/local/lib/python2.7/dist-packages/object_storage/transport/__init__.py", line 196, in finish
+    res = self.req.getresponse()
+  File "/usr/lib/python2.7/httplib.py", line 1136, in getresponse
+    response.begin()
+  File "/usr/lib/python2.7/httplib.py", line 453, in begin
+    version, status, reason = self._read_status()
+  File "/usr/lib/python2.7/httplib.py", line 409, in _read_status
+    line = self.fp.readline(_MAXLINE + 1)
+  File "/usr/lib/python2.7/socket.py", line 480, in readline
+    data = self._sock.recv(self._rbufsize)
+  File "/usr/lib/python2.7/ssl.py", line 756, in recv
+    return self.read(buflen)
+  File "/usr/lib/python2.7/ssl.py", line 643, in read
+    v = self._sslobj.read(len)
+KeyboardInterrupt
+root@mini:~# time swift -A https://dal05.objectstorage.softlayer.net/auth/v1.0/ -U SLOS1432883-2:SL1432883 -K 674c1cddcc2458f3400ba9f5f0066db87c056c5cff8bb1fcf85a5a0eec0b2ffd list --lh container1
+  18 2017-11-02 07:32:32               text/plain file.txt
+  18
+
+real    0m0.593s
+user    0m0.176s
+sys     0m0.056s
+root@mini:~#
+
+
+
+
+
+
+// What is the average READ speed in Mb/sec?
+// read 1 gb in 0m28.988s
+
+// What is the average WRITE speed in Mb/sec?
+// wrote 1 gb in 1m29.158s
+
+// Can you account for the discrepancies? Consider all of the possible reasons and explain.
+// There is a discrepancy between READ and WRITE because object storage is optimized for READ.
+// There is a discrepancy between READ and WRITE because writes need to change actual bits, and if there is replication, need to be written to multiple locations. READS might be faster if there is no need to read from multiple locations, e.g. on default settings.
+// IBM intentionally makes WRITES slower as a way to throttle this service.
+
+// What happens to these speeds if you run two threads in parallel?
+// If I split each of my reads-and-writes pairs into separate threads, I might get twice the speed, but only if the files being uploaded are less than the upload limit of my network.
+// If I split my reads into one thread and writes into another thread, I might get buggy behavior.
