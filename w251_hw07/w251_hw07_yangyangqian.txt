@@ -19,93 +19,96 @@ time swift -A https://dal05.objectstorage.softlayer.net/auth/v1.0/ -U SLOS143288
 
 
 //write
-real    1m29.379s
-user    0m5.176s
-sys     0m1.276s
+real    1m46.984s
+user    0m5.724s
+sys     0m1.428s
 root@mini:~#
 
-real    1m29.017s
-user    0m5.236s
-sys     0m1.188s
+real    1m59.139s
+user    0m5.876s
+sys     0m1.268s
 root@mini:~#
 
-real    1m29.079s
-user    0m5.056s
-sys     0m1.196s
+real    2m12.665s
+user    0m5.784s
+sys     0m1.352s
 root@mini:~#
+
 
 //average write
-//command line wrote 1 gb in 1m29.158s
+//command line wrote 1.2 gb in 1m59.596s
 
 
 
 //list
-    1 1.0G 2017-10-29 22:12:15 container1
-    0    0 2017-10-31 16:25:36 container2
-    0    0 2017-10-31 16:28:14 container3
-    1 1.0G
+    1   18 2017-10-29 22:12:15 container1
+    1   18 2017-10-31 16:25:36 container2
+    1 1.2G 2017-10-31 16:28:14 container3
+    3 1.2G
 
-real    0m0.749s
-user    0m0.208s
-sys     0m0.036s
-root@mini:~#
-
-1.0G 2017-10-31 16:22:49               text/plain file.txt
-1.0G
-
-real    0m0.613s
-user    0m0.184s
-sys     0m0.056s
-root@mini:~#
-
-1.0G 2017-10-31 16:25:36               text/plain file.txt
-1.0G
-
-real    0m0.582s
+real    0m0.745s
 user    0m0.176s
-sys     0m0.060s
+sys     0m0.064s
 root@mini:~#
 
-1.0G 2017-10-31 16:28:14               text/plain file.txt
-1.0G
 
-real    0m0.589s
+1.2G 2017-11-02 08:33:54               text/plain file.txt
+1.2G
+
+real    0m0.591s
 user    0m0.188s
-sys     0m0.044s
+sys     0m0.052s
 root@mini:~#
 
-//average list
-0m0.595s
 
+1.2G 2017-11-02 08:36:52               text/plain file.txt
+1.2G
+
+real    0m0.585s
+user    0m0.196s
+sys     0m0.048s
+root@mini:~#
+
+
+1.2G 2017-11-02 08:39:32               text/plain file.txt
+1.2G
+
+real    0m0.615s
+user    0m0.148s
+sys     0m0.088s
+root@mini:~#
 
 
 
 
 //download / read
 
-file.txt [auth 0.192s, headers 0.415s, total 29.567s, 36.554 MB/s]
+file.txt [auth 0.192s, headers 0.411s, total 29.372s, 43.122 MB/s]
 
-real    0m29.892s
-user    0m6.776s
-sys     0m4.300s
+real    0m31.044s
+user    0m8.200s
+sys     0m5.192s
 root@mini:~#
 
-file.txt [auth 0.183s, headers 0.387s, total 26.431s, 40.906 MB/s]
 
-real    0m27.285s
-user    0m6.732s
-sys     0m3.500s
+file.txt [auth 0.191s, headers 0.362s, total 68.888s, 18.317 MB/s]
+
+real    1m11.271s
+user    0m7.572s
+sys     0m3.720s
 root@mini:~#
 
-file.txt [auth 0.165s, headers 0.388s, total 28.014s, 38.556 MB/s]
 
-real    0m29.787s
-user    0m6.880s
-sys     0m3.972s
+file.txt [auth 0.169s, headers 0.386s, total 30.277s, 41.794 MB/s]
+
+real    0m31.693s
+user    0m8.128s
+sys     0m4.060s
 root@mini:~#
+
 
 //average read
-//command line read 1 gb in 0m28.988s
+//command line read 1.2 gb in 0m44.669s
 
 
 
@@ -175,10 +178,10 @@ root@mini:~#
 
 
 // What is the average READ speed in Mb/sec?
-// read 1 gb in 0m28.988s
+// read 1.2 gb in 0m44.669s
 
 // What is the average WRITE speed in Mb/sec?
-// wrote 1 gb in 1m29.158s
+// wrote 1.2 gb in 1m59.596s
 
 // Can you account for the discrepancies? Consider all of the possible reasons and explain.
 // There is a discrepancy between READ and WRITE because object storage is optimized for READ.
