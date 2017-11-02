@@ -1,133 +1,149 @@
 import io
 import os
-import csv
+import sys
+import re
 import zipfile
-import pickle
-import numpy as np
-import pandas as pd
 
 class DataProcessor(object):
     '''
     Class: DataProcessor
     
     Helper class that handles the details of processing the data files.
-    Intended to be used by one of the prepare-data scripts on the local gpfs server.
+    Intended to be used by one of the prepare-data scripts on the local gpfs node.
     '''
 
     def __init__(self, gpfs_suffix):
         self.gpfs_suffix = gpfs_suffix
         self.gpfs_prefix = "/gpfs/gpfsfpo/"
         self.file_prefix = "googlebooks-eng-all-2gram-20090715-"
-        self.file_headers = ["bi_gram", "year", "match_count", "page_count", "volume_count"]
-        self.local_temp_folder_prefix = "/root/temp/"
         self.gpfs_path = self.gpfs_prefix + self.gpfs_suffix + "/"
-        self.gpfs_counts_path = self.gpfs_prefix + self.gpfs_suffix + "/counts/"
-    
-    def delete_local_pickles(self):
-        '''
-        Deletes the pickled from the local temp folder on this gpfs server
-        '''
-        files = os.listdir(self.local_temp_folder_prefix)
-        for f in files:
-            if f.endswith(".pkl"):
-                os.remove(os.path.join(self.local_temp_folder_prefix,f))
-        print("deleted files from local temp:", len(files))
-        
 
-    def prep_file(self, file_suffix, nrows=None, chunk_size = 100000):
+        
+    def prep_file(self, file_suffix, nrows=None):
         '''
-        Given a zip file suffix, constructs a dataframe of the bi-gram and its match-counts, e.g.
+        Given a zip file suffix, constructs an output file of the bi-gram and its match-counts, e.g.
         
-           bi_gram_0 bi_gram_1  match_count
-        0  financial analysis   130
-        1  financial capacity   75
-        2  financial straits    53
-        3  ...
-        4  ...
+               bi_gram_0 bi_gram_1  match_count
+            0  financial analysis   130
+            1  financial capacity   75
+            2  financial straits    53
+            3  ...
+            4  ...
         
-        Because we can't assume bi-gram lists neatly ends on each file, this dataframe is 
-        needs to be combined with the results of all the other prepared files on this server,
-        before total counts can be calculated.
+        Format of the output file is 
+            bi_gram_0 TAB bi_gram_1 TAB match_count
+        
+        Name of the output file will be the similar, with an "-count.csv" suffix, e.g.
+            input file: /gpfs/gpfsfpo/gpfs1/googlebooks-eng-all-2gram-20090715-0.csv.zip
+            output file: /gpfs/gpfsfpo/gpfs1/googlebooks-eng-all-2gram-20090715-0-count.csv 
+        
+        Google's description indicates the ngrams inside each file are sorted alphabetically and then chronologically. 
+        But, the files themselves aren't necesarily ordered with respect to one another. 
+        e.g. A French two word phrase starting with 'm' will be in the middle of one of the French 2-gram files, 
+        but there's no way to know which without checking them all.
         '''
         
-        # will store the result here
-        result = None
+        
+        def is_useful(reo, word):
+            '''
+            internal helper function to determine if a word is a "useful english" word
+            '''
+            return (word is not None) and (reo.match(word) is not None)
+        
+        
+        def process_file(f_in, f_out):
+            '''
+            internal helper function to keep things tidy
+            
+            takes data from f_in, writes to f_out
+            '''
+            print("file:", file_suffix)
+            
+            # regex pattern to be used to determine usefulness of ngram
+            # useful is defined as having all characters a to z, or A to Z
+            pattern = "^[A-Za-z]+$"
+            reo = re.compile(pattern)
+            
+            # wraps input file object with a text IO wrapper so that it can be read correctly
+            f_in_txt = io.TextIOWrapper(f_in)
+            
+            # sets the initial variables
+            line_counter = 0
+            prev_ngram_0 = None
+            prev_ngram_1 = None
+            cumulative_match_count = 0
+            
+            # for each line in the file ...
+            for line in f_in_txt:
+                line_counter += 1
+                sys.stdout.write("\rfile: %s line: %i" % (file_suffix, line_counter))
+                sys.stdout.flush()
+                
+                # gets the ngram and match count tokens
+                tokens = line.split("\t")
+                ngram = str(tokens[0])
+                match_count = int(tokens[2])
+                
+                # gets each of the words in the ngram
+                ngram = ngram
+                ngram_tokens = ngram.split(" ")
+                ngram_tokens_len = len(ngram_tokens)
+                ngram_0 = None
+                ngram_1 = None
+                if ngram_tokens_len >= 1:
+                    ngram_0 = ngram_tokens[0]
+                    ngram_0 = str(ngram_0)
+                if ngram_tokens_len >= 2:
+                    ngram_1 = ngram_tokens[1]
+                    ngram_1 = str(ngram_1)
+                
+                # determines if the match count of current ngram needs to be added to the previous line's match count
+                if (prev_ngram_0 is None) and (prev_ngram_1 is None):
+                    # if at start, or haven't found a useful ngram, sets the initial values
+                    prev_ngram_0 = ngram_0
+                    prev_ngram_1 = ngram_1
+                    cumulative_match_count = match_count
+                elif (ngram_0 == prev_ngram_0) and (ngram_1 == prev_ngram_1):
+                    # if ngram is the same as the previous line, adds the match count value
+                    cumulative_match_count += match_count
+                else:
+                    # otherwise, outputs the previous ngram & accumulated match count, and resets the ngram & match count
+                    # if the previous ngram is useful, writes to output
+                    keep1 = is_useful(reo, prev_ngram_0)
+                    keep2 = is_useful(reo, prev_ngram_1)
+                    if (keep1 and keep2):
+                        print(prev_ngram_0 + "\t" + prev_ngram_1 + "\t" + str(cumulative_match_count), file=f_out)
+                    prev_ngram_0 = ngram_0
+                    prev_ngram_1 = ngram_1
+                    cumulative_match_count = match_count
+                
+                # checks if we're over the nrows limit
+                if (nrows is not None) and (line_counter >= nrows):
+                    break
+            
+            # at end of the file, outputs the last ngram and accumulated match count, if useful
+            keep1 = is_useful(reo, prev_ngram_0)
+            keep2 = is_useful(reo, prev_ngram_1)
+            if (keep1 and keep2):
+                print(prev_ngram_0 + "\t" + prev_ngram_1 + "\t" + str(cumulative_match_count), file=f_out)
+            
+            # finished processing the file
+            print("")
+            print("finished:", file_suffix)
+            
+            
 
-        # opens the zipped file and creates a panda based on the file
-        with zipfile.ZipFile(self.gpfs_path + self.file_prefix + str(file_suffix) + ".csv.zip", "r") as z:
-            with z.open(self.file_prefix + str(file_suffix) + ".csv", "r") as f:
-                print("file:", file_suffix)
-                f_txt = io.TextIOWrapper(f)
-                # reads the data file into a data frame, in chunks
-                chunk_counter = 0
-                data_frames = pd.read_csv(
-                    f_txt, 
-                    sep='\t', 
-                    lineterminator='\n', 
-                    header=None, 
-                    names=self.file_headers, 
-                    chunksize=chunk_size, 
-                    quoting=csv.QUOTE_NONE, 
-                    nrows=nrows)
-                
-                # for each chunk in the file ...
-                for frame in data_frames:
-                    chunk_counter += 1
-                    print("file:", file_suffix, "chunk:", chunk_counter)
-                    
-                    # splits the bi-gram into their own columns 
-                    temp = frame["bi_gram"].str.split(" ", expand=True)
-                    if temp.shape[1] == 2:
-                        # if the bi-gram has two words, adds the columns to the frame
-                        frame[["bi_gram_0", "bi_gram_1"]] = temp
-                    elif temp.shape[1] == 1:
-                        # otherwise if the the bi-gram is just one word,
-                        # then creates a second column of nulls
-                        frame[["bi_gram_0"]] = temp
-                        frame["bi_gram_1"] = np.nan
-                    else:
-                        raise ValueError("temp.shape[1] is not expected 1 or 2: ", temp.shape)
-                    
-                    # groups by the bi-gram-0, bi-gram-1, and match_count columns, to save some space
-                    frame = frame.groupby(["bi_gram_0", "bi_gram_1"])["match_count"].sum()
-                    frame = pd.DataFrame({"match_count":frame}).reset_index()
-                    
-                    # and pickles the chunk, to save on memory
-                    frame.to_pickle(self.local_temp_folder_prefix + str(file_suffix) + "_" + str(chunk_counter) + ".pkl")
-                print("finished:", file_suffix)
-                
-    
-    
-    def concat_local_pickles(self):
-        '''
-        Unpickles and concatenates all the pickles in the local temp folder,
-        then pickles the final result to a given folder, for another script to use.
         
-        This calculates the final counts from all the files in this gpfs server.
         
-        However, because there is no guarantee that the bi-grams neatly fit within
-        each server, there needs to a final concat and calculation step after this
-        '''
         
-        # will store result in here
-        result = None
-        
-        # gets the list of pickles from local temp
-        local_pickles = os.listdir(self.local_temp_folder_prefix)
-        
-        # for each pickle in local temp ...
-        for lp in local_pickles:
-            if lp.endswith(".pkl"):
-                with open(self.local_temp_folder_prefix + lp, "rb") as p:
-                    # unpickles and concatenates to build a single dataframe that represents all the pickles
-                    print("unpickling:", lp)
-                    temp = pickle.load(p)
-                    result = pd.concat([result, temp])
-                    
-        # groups by the bi-gram-0, bi-gram-1, and match_count columns, to save some space
-        result = result.groupby(["bi_gram_0", "bi_gram_1"])["match_count"].sum()
-        result = pd.DataFrame({"match_count":result}).reset_index()
-        print(result.shape)
-        
-        # pickles the dataframe to the gpfs, so that another script can use it
-        result.to_pickle(self.gpfs_counts_path + self.gpfs_suffix + "_counts.pkl")
+        # opens the zipped file
+        zipped_file_fullpath = self.gpfs_path + self.file_prefix + str(file_suffix) + ".csv.zip"
+        with zipfile.ZipFile(zipped_file_fullpath, "r") as z:
+            # unzips the file
+            file_in_zip = self.file_prefix + str(file_suffix) + ".csv"
+            with z.open(file_in_zip, "r") as f_in:
+                # opens the output file
+                file_out = self.gpfs_path + self.file_prefix + str(file_suffix) + "-count.csv"
+                with open(file_out, "w") as f_out:
+                    # reads from the input file and writes to output file
+                    process_file(f_in, f_out)
