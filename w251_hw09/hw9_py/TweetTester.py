@@ -2,6 +2,14 @@ import tweepy
 import time
 import datetime
 
+'''
+Basic test for Tweepy, to see if we can grab anthing from Twitter.
+Prints a filtered and truncated version of a tweet
+
+See 
+* http://www.awesomestats.in/spark-twitter-stream/
+'''
+
 consumer_key = "ccwtl2crmKH0p30pHocmcvouh"
 consumer_secret = "gMjli4yVo2Bf3kM3ejHez1vDtB5AqK7r2HTqk9pvx9GNEF7F9n"
 access_token = "1414214346-SIvjGchjh09A6r3YIZzTNSaj0LOBF3kqJL6syrW"
@@ -25,11 +33,12 @@ class MyStreamListener(tweepy.StreamListener):
             return simple_mentions
         
         simple = {}
+        simple["id"] = status._json["id"]
         simple["users"] = get_users(status.user, status._json["entities"]["user_mentions"])
         simple["topics"] = get_topics(status._json["entities"]["hashtags"])
-        simple["timestamp"] = datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')
+        #simple["timestamp"] = datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')
         #simple["text"] = status.text
-        print(simple)
+        print(status)
     
     def on_error(self, status_code):
         if status_code == 420:
