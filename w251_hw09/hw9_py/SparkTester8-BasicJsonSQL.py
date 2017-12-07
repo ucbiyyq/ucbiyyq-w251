@@ -32,7 +32,7 @@ spark = SparkSession \
     .getOrCreate()
     
 # creates a df of type: <class 'pyspark.sql.dataframe.DataFrame'>
-df = spark.read.json("/root/data/tweet_samples3.json")
+df = spark.read.json("/root/data/samples/tweet_samples3.json")
 #df.show()
 
 # show the schema

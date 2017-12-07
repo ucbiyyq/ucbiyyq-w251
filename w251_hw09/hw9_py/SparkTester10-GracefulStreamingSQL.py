@@ -9,6 +9,7 @@ from pyspark.sql.functions import collect_set
 from pyspark.sql.window import Window
 from pyspark.streaming import StreamingContext
 import json
+import time
 
 '''
 Test for Spark Stream to be used with a Tweet Tester, to see if we can using SQL to parse the tweets from the twitter stream, and stop gracefully
@@ -16,12 +17,10 @@ Apparently there is some dark magic to stopping spark streaming gracefully and e
 Consumes the tweets sampled by the Tweet Tester app.
 
 On Terminal 1 run,
-$ python SparkTester9-MoreStreamingSQL.py
-
-then start typing into terminal 1, hit enter to send a line of text
+$ python TweetTester10-GracefulStreaming.py
 
 On Terminal 2 run,
-$ python SparkTester9-MoreStreamingSQL.py
+$ python SparkTester10-GracefulStreaming.py
 
 as the tweet tester streams tweets into the spark streaming app, we should see ...
 
@@ -81,6 +80,7 @@ as the tweet tester streams tweets into the spark streaming app, we should see .
 
 See 
 * https://stackoverflow.com/questions/35093336/how-to-stop-spark-streaming-when-the-data-source-has-run-out
+* https://stackoverflow.com/questions/24374620/python-loop-to-run-for-certain-amount-of-seconds
 '''
 
 my_port = 5555
@@ -88,7 +88,7 @@ my_host = "spark-2-1"
 my_app_name = "hw9_py_test"
 my_spark_master = "local[2]" #local StreamingContext with two working threads
 my_spark_singleton_name = "sparkSessionSingletonInstance"
-my_batch_interval = 15 #batch sampling interval, seconds
+my_batch_interval = 5 #batch sampling interval, seconds
 my_top_n_topics = 3 #top n most frequently-occurring hashtags among all tweets during the sampling period, or at each sampling period
 my_total_run_time = 30 #script run duration, seconds
 
@@ -117,11 +117,16 @@ def main():
     tweets = ssc.socketTextStream(host, int(port))
     num_tweets_total = 0
     
-    # calculates the stats for each sampling interval
     def process(time, rdd):
+        '''
+        helper function that calculates the stats for each sample interval (RDD)
+        '''
         print("========= %s =========" % str(time))
+        print("processing %s records in this mini-batch" % str(rdd.count()))
         spark = getSparkSessionInstance(rdd.context.getConf())
         df = spark.read.json(rdd)
+        
+        #todo: add check for the important keys entities.hashtags.text, user.screen_name, entities.user_mentions.screen_name
         
         # finds the top topics, using SQL
         df.createOrReplaceTempView("tweets")
@@ -155,38 +160,57 @@ def main():
         top_topics_users_list.show(truncate=False)
         top_topics_mentions_list.show(truncate=False)
     
-    
-    # tweets.foreachRDD(process)
+    # calculates the stats for each sampling interval
+    tweets.foreachRDD(process)
     
     #num_tweets_total = tweets.foreachRDD(lambda rdd : rdd.count())
     #tweets.foreachRDD(lambda rdd : num_tweets_total = rdd.count())
     #tweets.count()
     
-    def get_top_topics(rdd):
-        # finds the top topics, using SQL
-        spark = getSparkSessionInstance(rdd.context.getConf())
-        df = spark.read.json(rdd)
-        df.createOrReplaceTempView("tweets")
-        qry = ( "WITH step1 AS (SELECT explode(entities.hashtags.text) as topic FROM tweets)"
-                ", topics AS (SELECT topic, count(*) as num_tweets FROM step1 GROUP BY topic)"
-                ", topics_ranked AS (SELECT topic, num_tweets, dense_rank() over (order by num_tweets desc, topic asc) as num_tweets_rnk FROM topics)"
-                " SELECT * FROM topics_ranked")
-        topics_ranked = spark.sql(qry)
-        top_3_topics_ranked = topics_ranked.filter(col("num_tweets_rnk") <= my_top_n_topics)
-        top_3_topics_ranked.createOrReplaceTempView("top_3_topics_ranked")
-        top_3_topics_ranked.persist()
+    # def get_topics(tweet):
+        # tweet_json = json.loads(tweet)
+        # topics = []
+        # try:
+            # topics = tweet_json.entities.hash_tags.text
+        # except:
+            # topics = []
+        # return topics
     
-    spark = getSparkSessionInstance(sc.getConf())
-    print(type(tweets))
-    top_3_topics_ranked = tweets.map(get_top_topics)
-    top_3_topics_ranked.pprint()
+    # def get_top_topics(rdd):
+        # finds the top topics, using SQL
+        # spark = getSparkSessionInstance(rdd.context.getConf())
+        # df = spark.read.json(rdd)
+        # df.createOrReplaceTempView("tweets")
+        # qry = ( "WITH step1 AS (SELECT explode(entities.hashtags.text) as topic FROM tweets)"
+                # ", topics AS (SELECT topic, count(*) as num_tweets FROM step1 GROUP BY topic)"
+                # ", topics_ranked AS (SELECT topic, num_tweets, dense_rank() over (order by num_tweets desc, topic asc) as num_tweets_rnk FROM topics)"
+                # " SELECT * FROM topics_ranked")
+        # topics_ranked = spark.sql(qry)
+        # top_3_topics_ranked = topics_ranked.filter(col("num_tweets_rnk") <= my_top_n_topics)
+        # top_3_topics_ranked.createOrReplaceTempView("top_3_topics_ranked")
+        # top_3_topics_ranked.persist()
+    
+    # gets the stats for the overall counts
+    # spark = getSparkSessionInstance(sc.getConf())
+    # print(type(tweets))
+    # top_3_topics_ranked = tweets.flatMap(get_topics)
+    # top_3_topics_ranked.pprint()
     
     ssc.start()
-    #ssc.awaitTermination()
+    
+    # stop causes an exception???
     ssc.awaitTermination(my_total_run_time)
-    print("almost done")
-    #ssc.stop(stopSparkContext = False)
-    ssc.stop(True, True)
+    
+    # t_end = time.time() + my_total_run_time
+    # while time.time() < t_end:
+        # pass
+    try:
+        #ssc.stop(stopSparkContext=True, stopGraceFully=True)
+        ssc.stop(True, True)
+    except:
+        pass
+    
+    print("do final stats somehow")
     print("finished!")
     
 if __name__ == "__main__":

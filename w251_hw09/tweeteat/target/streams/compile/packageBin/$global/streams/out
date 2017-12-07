@@ -1,18 +1,18 @@
-[0m[[0m[0minfo[0m] [0m[0mPackaging /root/tweeteat/target/scala-2.11/simple-project_2.11-1.0.jar ...[0m
+[0m[[0m[0minfo[0m] [0m[0mPackaging /root/github/w251/w251_hw09/tweeteat/target/scala-2.11/simple-project_2.11-1.0.jar ...[0m
 [0m[[0m[0mdebug[0m] [0m[0mInput file mappings:[0m
-[0m[[0m[0mdebug[0m] [0m[0m	TweatEat$delayedInit$body.class[0m
-[0m[[0m[0mdebug[0m] [0m[0m	  /root/tweeteat/target/scala-2.11/classes/TweatEat$delayedInit$body.class[0m
-[0m[[0m[0mdebug[0m] [0m[0m	TweatEat$$typecreator1$1.class[0m
-[0m[[0m[0mdebug[0m] [0m[0m	  /root/tweeteat/target/scala-2.11/classes/TweatEat$$typecreator1$1.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	TweatEat$.class[0m
-[0m[[0m[0mdebug[0m] [0m[0m	  /root/tweeteat/target/scala-2.11/classes/TweatEat$.class[0m
-[0m[[0m[0mdebug[0m] [0m[0m	TweatEat.class[0m
-[0m[[0m[0mdebug[0m] [0m[0m	  /root/tweeteat/target/scala-2.11/classes/TweatEat.class[0m
-[0m[[0m[0mdebug[0m] [0m[0m	TweetData.class[0m
-[0m[[0m[0mdebug[0m] [0m[0m	  /root/tweeteat/target/scala-2.11/classes/TweetData.class[0m
-[0m[[0m[0mdebug[0m] [0m[0m	TweatEat$$typecreator2$1.class[0m
-[0m[[0m[0mdebug[0m] [0m[0m	  /root/tweeteat/target/scala-2.11/classes/TweatEat$$typecreator2$1.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	  /root/github/w251/w251_hw09/tweeteat/target/scala-2.11/classes/TweatEat$.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	TweatEat$$anonfun$1.class[0m
-[0m[[0m[0mdebug[0m] [0m[0m	  /root/tweeteat/target/scala-2.11/classes/TweatEat$$anonfun$1.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	  /root/github/w251/w251_hw09/tweeteat/target/scala-2.11/classes/TweatEat$$anonfun$1.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	TweatEat$delayedInit$body.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	  /root/github/w251/w251_hw09/tweeteat/target/scala-2.11/classes/TweatEat$delayedInit$body.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	TweatEat$$typecreator1$1.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	  /root/github/w251/w251_hw09/tweeteat/target/scala-2.11/classes/TweatEat$$typecreator1$1.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	TweatEat.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	  /root/github/w251/w251_hw09/tweeteat/target/scala-2.11/classes/TweatEat.class[0m
 [0m[[0m[0mdebug[0m] [0m[0m	TweetData$.class[0m
-[0m[[0m[0mdebug[0m] [0m[0m	  /root/tweeteat/target/scala-2.11/classes/TweetData$.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	  /root/github/w251/w251_hw09/tweeteat/target/scala-2.11/classes/TweetData$.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	TweatEat$$typecreator2$1.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	  /root/github/w251/w251_hw09/tweeteat/target/scala-2.11/classes/TweatEat$$typecreator2$1.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	TweetData.class[0m
+[0m[[0m[0mdebug[0m] [0m[0m	  /root/github/w251/w251_hw09/tweeteat/target/scala-2.11/classes/TweetData.class[0m

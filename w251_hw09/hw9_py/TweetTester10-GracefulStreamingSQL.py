@@ -9,12 +9,10 @@ Test for Tweepy to be used with a Spark Streaming app, to see if we can parse th
 Sends twitter json to the Spark Streaming app.
 
 On Terminal 1 run,
-$ python SparkTester9-MoreStreamingSQL.py
-
-then start typing into terminal 1, hit enter to send a line of text
+$ python TweetTester10-GracefulStreaming.py
 
 On Terminal 2 run,
-$ python SparkTester9-MoreStreamingSQL.py
+$ python SparkTester10-GracefulStreaming.py
 
 as the tweet tester streams tweets into the spark streaming app, we should see ...
 
