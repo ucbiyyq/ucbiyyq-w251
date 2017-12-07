@@ -1,4 +1,7 @@
 /*
+* find and download the azure-eventhubs-spark_2.11-2.1.6.jar
+* place jar in same folder as this script
+*
 * sbt clean package
 * 
 * $SPARK_HOME/bin/spark-submit --jars azure-eventhubs-spark_2.11-2.1.6.jar --class AzureTestChu4 --packages org.apache.spark:spark-streaming_2.11:2.1.0 --master local[2] $(find target -iname "*.jar")
@@ -38,6 +41,10 @@ object AzureTestChu4 {
 		val inputDirectStream: DStream[EventData] = EventHubsUtils.createDirectStreams( ssc, namespace, progressDir, Map(name -> eventhubParameters) )
 		val windowedInputStream: DStream[EventData] = inputDirectStream.window(org.apache.spark.streaming.Minutes(1))
 		val output: DStream[JamesData] = windowedInputStream.flatMap(process)
+		
+		output.foreachRDD( rdd => {
+			println(rdd)
+		})
 	
 		ssc.start()
 		ssc.awaitTermination()
