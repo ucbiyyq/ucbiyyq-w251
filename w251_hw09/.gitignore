@@ -1,2 +1,4 @@
-tweeteat/project/target/*
+tweeteat/project*
 tweeteat/target*
+hw9_scala/project*
+hw9_scala/target*
