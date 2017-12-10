@@ -17,8 +17,10 @@ import org.apache.spark.SparkConf
 import scala.util.parsing.json._
 
 import com.microsoft.azure.eventhubs.EventData
+// import java.util.Map
 
 object AzureTestChu4 {
+	val totalRuntime_s: Integer = 15
 
 	def process(rdd: EventData) : List[JamesData] = {
 		val james1: JamesData = JamesData("binky", 1, 2)
@@ -26,6 +28,10 @@ object AzureTestChu4 {
 		val james3: JamesData = JamesData("sinky", 3, 4)
 		val results: List[JamesData] = List(james1, james2, james3)
 		return results
+	}
+	
+	def process2(rdd: EventData) = {
+		
 	}
 	
 	def main(args: Array[String]) {
@@ -39,15 +45,33 @@ object AzureTestChu4 {
 		val sparkConf: SparkConf = new SparkConf().setAppName("Azure Test")
 		val ssc: StreamingContext = new StreamingContext(sparkConf, Seconds(batchDuration))
 		val inputDirectStream: DStream[EventData] = EventHubsUtils.createDirectStreams( ssc, namespace, progressDir, Map(name -> eventhubParameters) )
-		val windowedInputStream: DStream[EventData] = inputDirectStream.window(org.apache.spark.streaming.Minutes(1))
-		val output: DStream[JamesData] = windowedInputStream.flatMap(process)
+		// inputDirectStream.foreachRDD { rdd => rdd.foreach(println) } //prints: com.microsoft.azure.eventhubs.EventData@1752db92
+		// val windowedInputStream: DStream[EventData] = inputDirectStream.window(Minutes(1))
+		val windowedInputStream: DStream[EventData] = inputDirectStream.window(Seconds(30))
+		// windowedInputStream.foreachRDD { rdd => rdd.foreach(println) } //prints: com.microsoft.azure.eventhubs.EventData@1752db92
 		
-		output.foreachRDD( rdd => {
-			println(rdd)
-		})
+		// val output: DStream[Map[String,Object]] = windowedInputStream.flatMap(rdd => rdd.getProperties)
+		// output.foreachRDD { rdd => rdd.foreach(println) } //prints: {content-type=application/opcua+uajson, source=mapping}
+		
+		// val output: DStream[String] = windowedInputStream.map(rdd => new String(rdd.getBody)) //no split
+		// val output: DStream[String] = windowedInputStream.flatMap(rdd => new String(rdd.getBody).split(" ")) //split by space
+		// val output: DStream[String] = windowedInputStream.flatMap(rdd => new String(rdd.getBody).split("\n")) //split by newline
+		val output: DStream[String] = windowedInputStream.flatMap(rdd => new String(rdd.getBody).split(",")) //split by comma
+		output.foreachRDD { rdd => rdd.foreach(println) } //prints: every RDD is a single line ???
+		
+		// val output: DStream[JamesData] = windowedInputStream.flatMap(process)
+		
+		
+		// output.foreachRDD( rdd => {
+			// println(rdd)
+		// })
 	
 		ssc.start()
-		ssc.awaitTermination()
+		ssc.awaitTerminationOrTimeout(totalRuntime_s * 1000)
+		ssc.stop(true, true)
+
+		println(s"============ Exiting ================")
+		System.exit(0)
 	}
 }
 
