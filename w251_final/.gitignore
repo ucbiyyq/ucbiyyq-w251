@@ -1,3 +1,5 @@
 azure-eventhubs-spark_2.11-2.1.6.jar
 project/*
 target/*
+metastore_db/*
+spark-warehouse/*
